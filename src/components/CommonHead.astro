@@ -1,0 +1,12 @@
+---
+import "../styles/globals.css";
+import { ViewTransitions } from "astro:transitions";
+const { pageTitle = "Emaús" } = Astro.props;
+---
+
+<head>
+    <ViewTransitions />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+</head>

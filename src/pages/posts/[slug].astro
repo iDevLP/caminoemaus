@@ -1,0 +1,48 @@
+---
+import CommonHead from "../../components/CommonHead.astro";
+import { getCollection } from "astro:content";
+import Tag from "../../components/Tag.astro";
+
+// 1. Genera una nueva ruta para cada entrada de colección
+export async function getStaticPaths() {
+    const blogEntries = await getCollection("posts");
+    return blogEntries.map((entry) => ({
+        params: { slug: entry.slug },
+        props: { entry },
+    }));
+}
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const allBlogPosts = await getCollection("posts");
+const filteredPost = allBlogPosts.filter((post) => post.slug != entry.slug);
+---
+
+<!doctype html>
+<html lang="en">
+    <CommonHead pageTitle=`Emaús - ${entry.slug}` />
+    <body class="bg-slate-900 text-slate-100">
+        <main class="grid sm:grid-cols-12 gap-5">
+            <section class="sm:col-span-8">
+                <header>
+                    <section class="flex gap-2">
+                        <h4 class="font-medium">{entry.data.author}</h4>
+                        <span>|</span>
+                        <span class="text-neutral-400">{entry.data.date}</span>
+                    </section>
+                    <h1 class="text-3xl font-semibold">{entry.data.title}</h1>
+                    <p class="font-light italic">
+                        "{entry.data.description}"
+                    </p>
+                    <img class="py-3" src={entry.data.image} alt="" />
+                </header>
+                <Content />
+                <section class="flex gap-4">
+                    {entry.data.tags.map((tag) => <Tag tagName={tag} />)}
+                </section>
+            </section>
+            <aside class="sm:col-span-4">
+                {filteredPost.map((post) => post.slug)}
+            </aside>
+        </main>
+    </body>
+</html>
